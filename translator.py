@@ -12,20 +12,33 @@ def check_model_and_tokenizer(model_name):
 check_model_and_tokenizer("Helsinki-NLP/opus-mt-en-de")
 
 @st.cache_resource
-def load_model():
-    return pipeline("translation_en_to_uk", model="Helsinki-NLP/opus-mt-en-de")
+def load_model(model_name, task):
+    return pipeline(task, model=model_name)
 
-translator = load_model()
+translator_de = load_model("Helsinki-NLP/opus-mt-en-de", "translation_en_to_de")
+translator_fr = load_model("Helsinki-NLP/opus-mt-en-fr", "translation_en_to_fr")
 
 st.title("Online Translate")
-st.subheader("Translate from english to german")
 
-input_text = st.text_area("Enter your text for translate", height=200)
+st.subheader("Translate from English to German")
+input_text_de = st.text_area("Enter your text for translation", height=200, key="de_translation_input")
 
-if st.button("Translate"):
-    if input_text.strip():
-        translation = translator(input_text)[0]['translation_text']
-        st.success("Translation:")
-        st.write(translation)
+if st.button("Translate to German"):
+    if input_text_de.strip():
+        translation_de_result = translator_de(input_text_de)[0]['translation_text']
+        st.success("Translation to German:")
+        st.write(translation_de_result)
+    else:
+        st.warning("Please enter your text.")
+
+# Second translation window (English to French)
+st.subheader("Translate from English to French")
+input_text_fr = st.text_area("Enter your text for translation", height=200, key="fr_translation_input")
+
+if st.button("Translate to French"):
+    if input_text_fr.strip():
+        translation_fr_result = translator_fr(input_text_fr)[0]['translation_text']
+        st.success("Translation to French:")
+        st.write(translation_fr_result)
     else:
         st.warning("Please enter your text.")
